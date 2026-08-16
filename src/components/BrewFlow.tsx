@@ -34,12 +34,12 @@ function Prep({ recipe, onStart }: { recipe: Recipe; onStart: () => void }) {
   return (
     <div className="mx-auto w-full max-w-3xl px-5 pb-8 sm:px-8">
       <div className="border-b border-rule py-5 sm:py-10">
-        <Link href="/" className="kicker -my-2 inline-block py-2 hover:text-ink">
+        <Link href="/" className="kicker -my-2 inline-block py-2 text-xs hover:text-ink">
           ← All recipes
         </Link>
-        <p className="meta mt-4 uppercase tracking-[0.16em]">Get ready to brew</p>
-        <h1 className="headline mt-2 text-3xl sm:text-5xl">{recipe.name}</h1>
-        <p className="meta mt-2 uppercase tracking-[0.16em]">
+        <p className="meta mt-4 text-sm uppercase tracking-[0.16em]">Get ready to brew</p>
+        <h1 className="headline mt-2 text-2xl sm:text-4xl">{recipe.name}</h1>
+        <p className="meta mt-2 text-sm uppercase tracking-[0.16em]">
           {recipe.author} · {recipe.level}
         </p>
       </div>
@@ -56,11 +56,11 @@ function Prep({ recipe, onStart }: { recipe: Recipe; onStart: () => void }) {
       </dl>
 
       <section className="py-6">
-        <h2 className="kicker">Before you start</h2>
+        <h2 className="kicker text-xs">Before you start</h2>
         <ol className="mt-3 space-y-3">
           {recipe.prep.map((line, i) => (
             <li key={i} className="flex gap-3">
-              <span className="tnum headline mt-0.5 w-5 shrink-0 text-lg text-accent">
+              <span className="tnum headline mt-0.5 w-5 shrink-0 text-base text-accent">
                 {i + 1}
               </span>
               <span className="summary text-base">{line}</span>
@@ -71,8 +71,8 @@ function Prep({ recipe, onStart }: { recipe: Recipe; onStart: () => void }) {
 
       <div className="flex flex-col items-start gap-4 border-t border-rule py-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="kicker">Start position</p>
-          <p className="headline mt-2 text-2xl">
+          <p className="kicker text-xs">Start position</p>
+          <p className="headline mt-2 text-xl">
             Switch <SwitchWord position={recipe.startSwitch} />
           </p>
         </div>
@@ -87,9 +87,9 @@ function Prep({ recipe, onStart }: { recipe: Recipe; onStart: () => void }) {
 function Spec({ value, label, note }: { value: string; label: string; note: string }) {
   return (
     <div className="bg-paper p-4">
-      <p className="tnum headline text-3xl">{value}</p>
-      <p className="kicker mt-1">{label}</p>
-      <p className="meta mt-1 text-sm leading-snug">{note}</p>
+      <p className="tnum headline text-2xl">{value}</p>
+      <p className="kicker mt-1 text-xs">{label}</p>
+      <p className="meta mt-1 text-xs leading-snug">{note}</p>
     </div>
   );
 }
