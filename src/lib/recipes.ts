@@ -54,7 +54,7 @@ export const RECIPES: Recipe[] = [
     author: "Tetsu Kasuya",
     level: "Beginner",
     blurb:
-      "A hybrid brew that runs as a pour-over first and finishes as an immersion. The second half is poured cool, which keeps the bitterness out and leaves a sweet, balanced cup. The most forgiving place to start with a Switch.",
+      "Runs as a pour-over, finishes as an immersion. The second half goes in cool, which keeps the bitterness out and the cup sweet. The most forgiving place to start.",
     dose: 20,
     water: 280,
     tempC: 90,
@@ -133,7 +133,7 @@ export const RECIPES: Recipe[] = [
     author: "Tetsu Kasuya",
     level: "Intermediate",
     blurb:
-      "The evolved hybrid: it opens closed, toggles the switch several times, and pushes for a heavier body and a bolder sweetness. More moving parts than the Devil, and more control over where the extraction lands.",
+      "Opens closed, toggles the switch several times, and pushes for heavier body and bolder sweetness. More moving parts than the Devil — and more control.",
     dose: 20,
     water: 300,
     tempC: 90,

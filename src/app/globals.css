@@ -59,7 +59,7 @@ button {
 .headline {
   font-family: var(--font-serif);
   letter-spacing: -0.01em;
-  line-height: 1.15;
+  line-height: 1.1;
   color: var(--ink);
 }
 
@@ -82,7 +82,7 @@ button {
 .summary {
   font-family: var(--font-serif);
   font-size: 1.25rem;
-  line-height: 1.6;
+  line-height: 1.4;
   color: var(--ink-soft);
 }
 

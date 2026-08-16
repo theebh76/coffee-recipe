@@ -52,7 +52,7 @@ export default function BrewDial({
   const stroke = urgent ? "var(--accent)" : "var(--ink)";
 
   return (
-    <div className="relative mx-auto aspect-square w-[min(78vw,22rem)]">
+    <div className="relative mx-auto aspect-square w-[min(56vw,14rem)]">
       <svg
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         className="h-full w-full -rotate-90"
@@ -104,16 +104,16 @@ export default function BrewDial({
 
       {/* The readout sits inside the rings. The inset keeps it clear of the
           heavy stroke — the rings are 14 units wide on a 240 viewBox. */}
-      <div className="absolute inset-[22%] flex flex-col items-center justify-center text-center">
-        <p className="meta text-sm uppercase tracking-[0.18em]">{label}</p>
+      <div className="absolute inset-[20%] flex flex-col items-center justify-center text-center">
+        <p className="meta text-xs uppercase tracking-[0.16em]">{label}</p>
         <p
-          className={`tnum headline mt-1 text-6xl leading-none sm:text-7xl ${
+          className={`tnum headline text-5xl leading-none sm:text-6xl ${
             urgent ? "text-accent" : "text-ink"
           }`}
         >
           {value}
         </p>
-        {caption ? <p className="meta tnum mt-2 text-sm">{caption}</p> : null}
+        {caption ? <p className="meta tnum text-xs">{caption}</p> : null}
       </div>
     </div>
   );

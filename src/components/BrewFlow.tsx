@@ -32,14 +32,14 @@ export default function BrewFlow({ recipe }: { recipe: Recipe }) {
 
 function Prep({ recipe, onStart }: { recipe: Recipe; onStart: () => void }) {
   return (
-    <div className="mx-auto w-full max-w-3xl px-5 pb-24 sm:px-8">
-      <div className="border-b border-rule py-10 sm:py-14">
-        <Link href="/" className="kicker inline-block hover:text-ink">
+    <div className="mx-auto w-full max-w-3xl px-5 pb-8 sm:px-8">
+      <div className="border-b border-rule py-5 sm:py-10">
+        <Link href="/" className="kicker -my-2 inline-block py-2 hover:text-ink">
           ← All recipes
         </Link>
-        <p className="meta mt-8 uppercase tracking-[0.16em]">Get ready to brew</p>
-        <h1 className="headline mt-3 text-3xl sm:text-5xl">{recipe.name}</h1>
-        <p className="meta mt-3 uppercase tracking-[0.16em]">
+        <p className="meta mt-4 uppercase tracking-[0.16em]">Get ready to brew</p>
+        <h1 className="headline mt-2 text-3xl sm:text-5xl">{recipe.name}</h1>
+        <p className="meta mt-2 uppercase tracking-[0.16em]">
           {recipe.author} · {recipe.level}
         </p>
       </div>
@@ -55,21 +55,21 @@ function Prep({ recipe, onStart }: { recipe: Recipe; onStart: () => void }) {
         />
       </dl>
 
-      <section className="py-10">
+      <section className="py-6">
         <h2 className="kicker">Before you start</h2>
-        <ol className="mt-6 space-y-5">
+        <ol className="mt-3 space-y-3">
           {recipe.prep.map((line, i) => (
-            <li key={i} className="flex gap-4">
-              <span className="tnum headline mt-0.5 w-6 shrink-0 text-lg text-accent">
+            <li key={i} className="flex gap-3">
+              <span className="tnum headline mt-0.5 w-5 shrink-0 text-lg text-accent">
                 {i + 1}
               </span>
-              <span className="summary">{line}</span>
+              <span className="summary text-base">{line}</span>
             </li>
           ))}
         </ol>
       </section>
 
-      <div className="flex flex-col items-start gap-6 border-t border-rule py-8 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col items-start gap-4 border-t border-rule py-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="kicker">Start position</p>
           <p className="headline mt-2 text-2xl">
@@ -86,10 +86,10 @@ function Prep({ recipe, onStart }: { recipe: Recipe; onStart: () => void }) {
 
 function Spec({ value, label, note }: { value: string; label: string; note: string }) {
   return (
-    <div className="bg-paper p-5">
+    <div className="bg-paper p-4">
       <p className="tnum headline text-3xl">{value}</p>
-      <p className="kicker mt-1.5">{label}</p>
-      <p className="meta mt-2 leading-snug">{note}</p>
+      <p className="kicker mt-1">{label}</p>
+      <p className="meta mt-1 text-sm leading-snug">{note}</p>
     </div>
   );
 }
@@ -138,8 +138,8 @@ function Brewing({
       : `${formatClock(elapsed)} / ${formatClock(recipe.totalSeconds)}`;
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-5 pb-24 sm:px-8">
-      <div className="flex items-baseline justify-between gap-4 border-b border-rule py-6">
+    <div className="mx-auto w-full max-w-3xl px-5 pb-5 sm:px-8">
+      <div className="flex items-baseline justify-between gap-4 border-b border-rule py-4">
         <p className="headline text-xl sm:text-2xl">{recipe.name}</p>
         <button
           type="button"
@@ -151,12 +151,12 @@ function Brewing({
         </button>
       </div>
 
-      <p className="kicker mt-8 text-center">
+      <p className="kicker mt-4 text-center">
         Step {index + 1} of {recipe.steps.length}
       </p>
 
       {/* the dial */}
-      <div className="mt-6">
+      <div className="mt-3">
         <BrewDial
           stepProgress={stepProgress}
           totalProgress={elapsed / recipe.totalSeconds}
@@ -169,14 +169,14 @@ function Brewing({
       </div>
 
       {/* what to do */}
-      <div className="mt-8 border-b border-rule pb-8 text-center">
+      <div className="mt-4 border-b border-rule pb-5 text-center">
         <p className="summary mx-auto max-w-xl text-ink">{showInstruction}</p>
 
-        {step.caution ? <p className="kicker mt-4">⚠ {step.caution}</p> : null}
+        {step.caution ? <p className="kicker mt-2">⚠ {step.caution}</p> : null}
 
         {/* switch state */}
         {step.switchTo ? (
-          <p className="mt-6 flex items-center justify-center gap-3">
+          <p className="mt-3 flex items-center justify-center gap-3">
             <span className="meta uppercase tracking-[0.18em]">Switch</span>
             <span
               className={`kicker text-base ${
@@ -189,7 +189,7 @@ function Brewing({
         ) : null}
       </div>
 
-      <div className="mt-8 flex flex-wrap justify-center gap-3">
+      <div className="mt-5 flex flex-wrap justify-center gap-3">
         <button
           type="button"
           onClick={running ? pause : play}
@@ -210,11 +210,11 @@ function Brewing({
 
       {/* what's coming */}
       {next ? (
-        <div className="mt-10 border-t border-rule pt-6 text-center">
+        <div className="mt-3 border-t border-rule pt-3 text-center">
           <p className="kicker">
             Next in <span className="tnum">{Math.ceil(untilNext)}s</span>
           </p>
-          <p className="summary mx-auto mt-2 max-w-xl">{next.instruction}</p>
+          <p className="summary mx-auto mt-1 max-w-xl text-base">{next.instruction}</p>
         </div>
       ) : null}
     </div>
