@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { formatClock, stepAt, type Recipe, type Step } from "@/lib/recipes";
+import { formatClock, stepAt, type Recipe } from "@/lib/recipes";
 import useBrewTimer from "./useBrewTimer";
+import BrewDial from "./BrewDial";
 
 export default function BrewFlow({ recipe }: { recipe: Recipe }) {
   const [brewing, setBrewing] = useState(false);
@@ -83,12 +84,6 @@ function Prep({ recipe, onStart }: { recipe: Recipe; onStart: () => void }) {
   );
 }
 
-function windowLabel(kind: Step["kind"], seconds: number): string {
-  if (kind === "cool") return `${seconds}s of cooling time left`;
-  if (kind === "drawdown") return `flip it within ${seconds}s`;
-  return `${seconds}s of pour window left`;
-}
-
 function Spec({ value, label, note }: { value: string; label: string; note: string }) {
   return (
     <div className="bg-paper p-5">
@@ -128,98 +123,73 @@ function Brewing({
   const showInstruction = active
     ? step.instruction
     : (step.holdInstruction ?? step.instruction);
-  const showTarget = active
-    ? step.target
-    : step.holdTitle
-      ? `${Math.ceil(untilNext)}s`
-      : step.target;
-
   const stepSpan = (next ? next.at : recipe.totalSeconds) - step.at;
   const stepProgress = stepSpan > 0 ? Math.min(1, into / stepSpan) : 1;
+
+  // What the dial reads: the pour target while you're pouring, otherwise the
+  // countdown to the next step.
+  const dialValue = active
+    ? (step.target ?? `${Math.ceil(activeRemaining)}s`)
+    : (step.holdTitle ? `${Math.ceil(untilNext)}s` : (step.target ?? `${Math.ceil(untilNext)}s`));
+  // Kept short — it has to sit inside the ring without touching the stroke.
+  const dialCaption =
+    active && step.activeSeconds
+      ? `${Math.ceil(activeRemaining)}s left`
+      : `${formatClock(elapsed)} / ${formatClock(recipe.totalSeconds)}`;
 
   return (
     <div className="mx-auto w-full max-w-3xl px-5 pb-24 sm:px-8">
       <div className="flex items-baseline justify-between gap-4 border-b border-rule py-6">
-        <p className="headline text-lg sm:text-xl">{recipe.name}</p>
-        <button type="button" onClick={onAbort} className="meta uppercase hover:text-accent">
+        <p className="headline text-xl sm:text-2xl">{recipe.name}</p>
+        <button
+          type="button"
+          onClick={onAbort}
+          /* -my-3 py-3 keeps a 44px tap target without adding visual height */
+          className="meta -my-3 shrink-0 py-3 uppercase hover:text-accent"
+        >
           End brew
         </button>
       </div>
 
-      <p className="kicker mt-10">
+      <p className="kicker mt-8 text-center">
         Step {index + 1} of {recipe.steps.length}
       </p>
 
-      {/* the big call-out */}
-      <div className="mt-6 min-h-[15rem] border-b border-rule pb-10">
-        <p className="meta uppercase tracking-[0.2em]">{showTitle}</p>
-
-        {showTarget ? (
-          <p
-            className={`tnum headline mt-2 text-7xl sm:text-8xl ${
-              active ? "text-accent" : "text-ink"
-            }`}
-          >
-            {showTarget}
-          </p>
-        ) : null}
-
-        <p className="summary mt-5 max-w-xl text-lg">{showInstruction}</p>
-
-        {step.caution ? (
-          <p className="kicker mt-4">⚠ {step.caution}</p>
-        ) : null}
-
-        {active && step.activeSeconds ? (
-          <p className="meta tnum mt-4 uppercase">
-            {windowLabel(step.kind, Math.ceil(activeRemaining))}
-          </p>
-        ) : null}
-
-        {/* per-step progress */}
-        <div className="mt-7 h-px w-full bg-rule">
-          <div
-            className="h-px bg-accent transition-[width] duration-200 ease-linear"
-            style={{ width: `${stepProgress * 100}%` }}
-          />
-        </div>
-      </div>
-
-      {/* switch state */}
-      {step.switchTo ? (
-        <div className="flex items-center gap-3 border-b border-rule py-5">
-          <span className="meta uppercase tracking-[0.18em]">Switch</span>
-          <span
-            className={`kicker ${
-              step.switchTo === "open" ? "text-steep" : "text-accent"
-            }`}
-          >
-            {step.switchTo}
-          </span>
-        </div>
-      ) : null}
-
-      {/* clock */}
-      <div className="flex items-end justify-between gap-6 py-8">
-        <div>
-          <p className="kicker">Elapsed</p>
-          <p className="tnum headline mt-1 text-5xl sm:text-6xl">
-            {formatClock(elapsed)}
-          </p>
-        </div>
-        <p className="tnum meta pb-2 text-base">
-          of {formatClock(recipe.totalSeconds)}
-        </p>
-      </div>
-
-      <div className="h-1 w-full bg-rule">
-        <div
-          className="h-1 bg-ink transition-[width] duration-200 ease-linear"
-          style={{ width: `${Math.min(100, (elapsed / recipe.totalSeconds) * 100)}%` }}
+      {/* the dial */}
+      <div className="mt-6">
+        <BrewDial
+          stepProgress={stepProgress}
+          totalProgress={elapsed / recipe.totalSeconds}
+          value={dialValue}
+          label={showTitle}
+          caption={dialCaption}
+          urgent={active}
+          imminent={untilNext <= 5}
         />
       </div>
 
-      <div className="mt-8 flex flex-wrap gap-3">
+      {/* what to do */}
+      <div className="mt-8 border-b border-rule pb-8 text-center">
+        <p className="summary mx-auto max-w-xl text-ink">{showInstruction}</p>
+
+        {step.caution ? <p className="kicker mt-4">⚠ {step.caution}</p> : null}
+
+        {/* switch state */}
+        {step.switchTo ? (
+          <p className="mt-6 flex items-center justify-center gap-3">
+            <span className="meta uppercase tracking-[0.18em]">Switch</span>
+            <span
+              className={`kicker text-base ${
+                step.switchTo === "open" ? "text-steep" : "text-accent"
+              }`}
+            >
+              {step.switchTo}
+            </span>
+          </p>
+        ) : null}
+      </div>
+
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
         <button
           type="button"
           onClick={running ? pause : play}
@@ -240,11 +210,11 @@ function Brewing({
 
       {/* what's coming */}
       {next ? (
-        <div className="mt-10 border-t border-rule pt-6">
+        <div className="mt-10 border-t border-rule pt-6 text-center">
           <p className="kicker">
             Next in <span className="tnum">{Math.ceil(untilNext)}s</span>
           </p>
-          <p className="summary mt-2">{next.instruction}</p>
+          <p className="summary mx-auto mt-2 max-w-xl">{next.instruction}</p>
         </div>
       ) : null}
     </div>

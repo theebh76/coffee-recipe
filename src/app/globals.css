@@ -28,13 +28,21 @@
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-html,
+html {
+  /* Base bumped from the 16px default — this gets read at arm's length,
+     often on a phone propped next to a scale. */
+  font-size: 18px;
+}
+
 body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-sans);
+  font-size: 1rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Keep content clear of the home indicator on notched iPhones. */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 a {
@@ -57,24 +65,24 @@ button {
 
 .kicker {
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--accent);
 }
 
 .meta {
   font-family: var(--font-sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
   color: var(--ink-soft);
 }
 
 .summary {
   font-family: var(--font-serif);
-  font-size: 1rem;
-  line-height: 1.55;
+  font-size: 1.25rem;
+  line-height: 1.6;
   color: var(--ink-soft);
 }
 
@@ -99,11 +107,12 @@ button {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-size: 0.75rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  padding: 0.9rem 2rem;
+  /* Comfortably past the 44px iOS tap target at this font size. */
+  padding: 1.05rem 2.25rem;
   border: 1px solid var(--ink);
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   cursor: pointer;

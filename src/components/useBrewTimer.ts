@@ -27,20 +27,78 @@ export default function useBrewTimer(totalSeconds: number) {
     if (!running) return;
 
     let raf = 0;
-    const tick = () => {
+    const sync = () => {
       const next = Math.min(totalSeconds, readNow());
       setElapsed(next);
       if (next >= totalSeconds) {
         setRunning(false);
         frozenRef.current = totalSeconds;
         anchorRef.current = null;
-        return;
+        return true;
       }
+      return false;
+    };
+
+    const tick = () => {
+      if (sync()) return;
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+
+    // rAF is suspended while the tab is hidden — if the phone dims mid-brew,
+    // the clock would sit frozen on screen. The elapsed value is derived from
+    // a wall-clock anchor, so a coarse interval keeps it honest in the
+    // background, and we re-sync the moment the tab comes back into view.
+    const interval = setInterval(sync, 1000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") sync();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [running, totalSeconds, readNow]);
+
+  // Keep the screen awake while a brew is running — a 3½ minute brew is long
+  // enough for an iPhone to sleep, and you are looking at the dial, not
+  // touching it.
+  useEffect(() => {
+    if (!running || !("wakeLock" in navigator)) return;
+
+    let sentinel: WakeLockSentinel | null = null;
+    let cancelled = false;
+
+    const acquire = async () => {
+      try {
+        const lock = await navigator.wakeLock.request("screen");
+        if (cancelled) {
+          void lock.release();
+          return;
+        }
+        sentinel = lock;
+      } catch {
+        // Denied or unsupported — the brew still works, the screen just sleeps.
+      }
+    };
+
+    void acquire();
+
+    // iOS drops the lock whenever the tab is backgrounded; take it again.
+    const onVisible = () => {
+      if (document.visibilityState === "visible" && sentinel === null) void acquire();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
+    return () => {
+      cancelled = true;
+      document.removeEventListener("visibilitychange", onVisible);
+      void sentinel?.release();
+      sentinel = null;
+    };
+  }, [running]);
 
   const play = useCallback(() => {
     if (frozenRef.current >= totalSeconds) return;
