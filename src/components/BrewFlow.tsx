@@ -132,8 +132,11 @@ function Brewing({
     ? (step.target ?? `${Math.ceil(activeRemaining)}s`)
     : (step.holdTitle ? `${Math.ceil(untilNext)}s` : (step.target ?? `${Math.ceil(untilNext)}s`));
   // Kept short — it has to sit inside the ring without touching the stroke.
+  // Only count down here when the big value is a target like "250g". Steps with
+  // no target (a stir, say) already show the countdown as the value, so repeat
+  // it and the dial reads "10s / 10s left"; those get the overall clock instead.
   const dialCaption =
-    active && step.activeSeconds
+    active && step.activeSeconds && step.target
       ? `${Math.ceil(activeRemaining)}s left`
       : `${formatClock(elapsed)} / ${formatClock(recipe.totalSeconds)}`;
 

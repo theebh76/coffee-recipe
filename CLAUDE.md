@@ -124,6 +124,8 @@ telling someone when to stop pouring.
    `totalSeconds`, which is what ends the brew.
 3. `prepFor(...)` generates the standard five-line prep checklist; pass a
    custom `prep` array instead if the method needs different setup.
+   `kind` is descriptive only — nothing reads it — so adding a new one
+   (`agitate`, say) costs nothing beyond the union type.
 4. Nothing else needs touching — the chooser and the route both read `RECIPES`,
    and `generateStaticParams` picks the new id up automatically.
 
@@ -136,6 +138,10 @@ telling someone when to stop pouring.
   out but the UI hasn't caught up.
 - **Steps are absolute, not relative.** Storing durations and summing them
   makes skip/seek and pause drift. `at` is the source of truth.
+- **A step with no `target` shows its countdown as the dial's big value.** The
+  caption then has to show the overall clock instead, or the dial reads
+  "10s / 10s left". That branch is in `dialCaption` in `BrewFlow.tsx` — keep
+  it if you add more target-less steps (stirs, swirls, rests).
 
 ## Deployment
 

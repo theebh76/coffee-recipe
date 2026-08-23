@@ -1,6 +1,12 @@
 export type SwitchPosition = "open" | "closed";
 
-export type StepKind = "pour" | "cool" | "switch" | "drawdown" | "serve";
+export type StepKind =
+  | "pour"
+  | "cool"
+  | "agitate"
+  | "switch"
+  | "drawdown"
+  | "serve";
 
 export type Step = {
   /** Seconds from the start of the brew. */
@@ -214,6 +220,72 @@ export const RECIPES: Recipe[] = [
         kind: "serve",
         title: "Done",
         instruction: "Lift the dripper off, swirl, and pour.",
+      },
+    ],
+  },
+  {
+    id: "hoffmann-switch-immersion",
+    name: "Switch Immersion",
+    author: "James Hoffmann",
+    level: "Beginner",
+    blurb:
+      "A straight immersion with no pour-over phase at all. Everything goes in at once, steeps for two minutes, then drains. The shortest brew here and the hardest to get wrong.",
+    dose: 15,
+    water: 250,
+    tempC: 93,
+    grind: "Fine (a step finer than you would grind for cupping)",
+    totalSeconds: 165,
+    startSwitch: "closed",
+    prep: prepFor(250, "Fine (a step finer than you would grind for cupping)", "closed", 93),
+    steps: [
+      {
+        at: 0,
+        kind: "pour",
+        title: "Pour to",
+        target: "30g",
+        instruction: "Switch closed. Wet the bed with twice the coffee weight.",
+        activeSeconds: 10,
+        holdTitle: "Swirl",
+        holdInstruction: "Swirl the dripper until no dry grounds are left.",
+        switchTo: "closed",
+      },
+      {
+        at: 15,
+        kind: "pour",
+        title: "Pour to",
+        target: "250g",
+        instruction: "Add the rest of the water in one go and leave it alone.",
+        activeSeconds: 30,
+        holdTitle: "Steeping",
+        holdInstruction: "Full immersion. Nothing to do until the stir.",
+        switchTo: "closed",
+      },
+      {
+        at: 60,
+        kind: "agitate",
+        title: "Stir",
+        instruction: "One gentle stir to break the crust and even out the bed.",
+        activeSeconds: 10,
+        holdTitle: "Steeping",
+        holdInstruction: "Let it sit. The switch stays closed.",
+        switchTo: "closed",
+      },
+      {
+        at: 120,
+        kind: "drawdown",
+        title: "Open switch",
+        target: "OPEN",
+        instruction: "Two minutes are up — open the switch and let it drain.",
+        activeSeconds: 10,
+        holdTitle: "Drawing down",
+        holdInstruction: "Leave it be until the bed is dry.",
+        switchTo: "open",
+      },
+      {
+        at: 165,
+        kind: "serve",
+        title: "Done",
+        instruction: "Lift the dripper off, swirl the carafe, and pour.",
       },
     ],
   },
