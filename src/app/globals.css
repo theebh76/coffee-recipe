@@ -1,6 +1,16 @@
 @import "tailwindcss";
 
+/* ---- palette ----------------------------------------------------------
+   Light is the default. Dark is applied two ways, and both are needed:
+   `:root[data-theme="dark"]` for an explicit choice, and the media query
+   (guarded with :not([data-theme="light"])) for visitors who have chosen
+   nothing and just follow their OS. Every component reads these tokens, so
+   the whole site — including the brew dial's SVG strokes — re-themes from
+   here alone. */
+
 :root {
+  color-scheme: light;
+
   --paper: #fff1e5;
   --paper-soft: #fceadb;
   --paper-deep: #f5dcc6;
@@ -11,6 +21,42 @@
   --link: #0d7680;
   --roast: #6b3f24;
   --steep: #0d7680;
+}
+
+/* Dark keeps the warmth: a roasted near-black rather than a neutral slate,
+   so it still reads as the same publication. Accent and steep are lifted
+   well off their light values — #990f3d and #0d7680 both fail contrast on a
+   dark ground. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --paper: #17130f;
+    --paper-soft: #201a15;
+    --paper-deep: #2b231c;
+    --ink: #f5ece1;
+    --ink-soft: #b3a596;
+    --rule: #382e25;
+    --accent: #f2698d;
+    --link: #5cbdb6;
+    --roast: #c08a5c;
+    --steep: #5cbdb6;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --paper: #17130f;
+  --paper-soft: #201a15;
+  --paper-deep: #2b231c;
+  --ink: #f5ece1;
+  --ink-soft: #b3a596;
+  --rule: #382e25;
+  --accent: #f2698d;
+  --link: #5cbdb6;
+  --roast: #c08a5c;
+  --steep: #5cbdb6;
 }
 
 @theme inline {
@@ -147,6 +193,7 @@ button {
 .btn-primary:hover {
   background: var(--accent);
   border-color: var(--accent);
+  color: var(--paper);
 }
 
 .btn-ghost {
@@ -157,6 +204,38 @@ button {
 
 .btn-ghost:hover {
   border-color: var(--ink);
+}
+
+/* ---- theme toggle ----------------------------------------------------
+   The button renders BOTH icons every time and lets CSS decide which shows.
+   That keeps the server and client markup byte-identical, so there is no
+   hydration mismatch and the component needs no React state at all — the
+   icon follows whatever `data-theme` the blocking script in <head> set. */
+
+.theme-icon {
+  line-height: 1;
+}
+
+.theme-icon--sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-icon--moon {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-icon--sun {
+  display: inline;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-icon--moon {
+    display: none;
+  }
+
+  :root:not([data-theme="light"]) .theme-icon--sun {
+    display: inline;
+  }
 }
 
 /* ---- animations ---- */

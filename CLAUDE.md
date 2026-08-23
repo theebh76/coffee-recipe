@@ -35,6 +35,46 @@ Type: Georgia serif for headlines and body copy (`.headline`, `.summary`),
 system sans for UI chrome (`.kicker`, `.meta`). `.tnum` forces tabular numerals
 so the clock and pour targets don't jitter as digits change.
 
+### Dark mode
+
+Same tokens, re-pointed. Dark keeps the warmth — a roasted near-black rather
+than a neutral slate — so it still reads as the same publication.
+
+| Token          | Dark      | Note                                    |
+|----------------|-----------|-----------------------------------------|
+| `--paper`      | `#17130f` | Warm near-black                         |
+| `--paper-soft` | `#201a15` | Raised panels                           |
+| `--paper-deep` | `#2b231c` | Dial track                              |
+| `--ink`        | `#f5ece1` | Warm off-white                          |
+| `--ink-soft`   | `#b3a596` | Meta text                               |
+| `--rule`       | `#382e25` | Hairlines                               |
+| `--accent`     | `#f2698d` | Lifted rose — `#990f3d` fails on dark   |
+| `--link`/`--steep` | `#5cbdb6` | Lifted teal — `#0d7680` fails on dark |
+
+Because every component reads the tokens, nothing else needed touching — the
+brew dial's SVG strokes re-theme from here too.
+
+Dark is applied **two ways, and both are required**:
+
+- `:root[data-theme="dark"]` — an explicit choice made with the toggle.
+- `@media (prefers-color-scheme: dark)` scoped to
+  `:root:not([data-theme="light"])` — visitors who never chose and follow
+  their OS. The `:not()` guard is what lets an explicit *light* choice beat a
+  dark OS setting.
+
+`THEME_INIT_SCRIPT` in `src/lib/theme.ts` is inlined into `<head>` and runs
+before first paint, restoring a saved choice onto `<html>`. Without it a
+dark-mode visitor gets a salmon flash on every navigation. `<html>` carries
+`suppressHydrationWarning` because that script mutates it before React
+hydrates.
+
+`ThemeToggle` is deliberately **stateless**: it renders both icons every time
+and lets CSS choose which shows (`.theme-icon--*`). Server and client markup
+stay byte-identical, so there is no hydration mismatch and no need to read
+localStorage during render. Don't "improve" it into a `useState` +
+`useEffect` component — that reintroduces both problems, and trips
+`react-hooks/set-state-in-effect`.
+
 ## Files
 
 ```
@@ -99,5 +139,23 @@ telling someone when to stop pouring.
 
 ## Deployment
 
-Not yet deployed — no GitHub repo or Vercel project has been created for this
-one. Build locally with `npm run build`; `npm run dev` for the dev server.
+- **GitHub**: [theebh76/coffee-recipe](https://github.com/theebh76/coffee-recipe) (public)
+- **Vercel project**: `theebh-6436s-projects/coffee-recipe`
+- **GitHub -> Vercel is connected**, unlike mediakit — `vercel link` wired it
+  up, so a push to `main` deploys on its own. Manual deploys are still
+  `vercel deploy --prod --yes`.
+
+**Deployment Protection is ON** (`ssoProtection: all_except_custom_domains`),
+Vercel's default for new projects. Every deployment URL 302s to a Vercel SSO
+login, so the site is not publicly reachable and cannot be verified in
+production. To open it up:
+
+```
+vercel project protection disable sso
+```
+
+or dashboard -> coffee-recipe -> Settings -> Deployment Protection -> Vercel
+Authentication -> Disabled. Mediakit does not have this on, which is why that
+site is publicly viewable and this one is not.
+
+Local: `npm run build`, `npm run dev`.
